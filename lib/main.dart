@@ -1,41 +1,46 @@
+import 'dart:html';
+import 'package:flutter/foundation.dart'
+    show debugDefaultTargetPlatformOverride;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:no_newspaper_oficial/admpage.dart';
+import 'package:no_newspaper_oficial/backend/noAPI.dart';
+import 'package:no_newspaper_oficial/loginpage.dart';
+import 'package:no_newspaper_oficial/userpage.dart';
+import 'package:no_newspaper_oficial/errorpage.dart';
+import 'package:rflutter_alert/rflutter_alert.dart';
+import 'dart:io';
 
-void main() => runApp(MyApp());
+import 'backend/classPODO.dart';
+//import 'backend/firebaseConect.dart';
+
+//BaseDo firebs;
+
+void main() async {
+  // See https://github.com/flutter/flutter/wiki/Desktop-shells#target-platform-override
+  debugDefaultTargetPlatformOverride = TargetPlatform.fuchsia;
+
+  runApp(new MyApp());
+}
 
 class MyApp extends StatelessWidget {
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'NO - Newspaper Oficial',
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // Try running your application with "flutter run". You'll see the
-        // application has a blue toolbar. Then, without quitting the app, try
-        // changing the primarySwatch below to Colors.green and then invoke
-        // "hot reload" (press "r" in the console where you ran "flutter run",
-        // or simply save your changes to "hot reload" in a Flutter IDE).
-        // Notice that the counter didn't reset back to zero; the application
-        // is not restarted.
         primarySwatch: Colors.blue,
+        // See https://github.com/flutter/flutter/wiki/Desktop-shells#fonts
+        fontFamily: 'Roboto',
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'NO - Newspaper Oficial'),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key, this.title}) : super(key: key);
-
-  // This widget is the home page of your application. It is stateful, meaning
-  // that it has a State object (defined below) that contains fields that affect
-  // how it looks.
-
-  // This class is the configuration for the state. It holds the values (in this
-  // case the title) provided by the parent (in this case the App widget) and
-  // used by the build method of the State. Fields in a Widget subclass are
-  // always marked "final".
 
   final String title;
 
@@ -44,68 +49,133 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-
-  void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
-  }
-
+  final _senha = new TextEditingController();
+  final _user = new TextEditingController();
   @override
   Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
     return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
+      body: Column(
+        children: [
+          Container(
+            width: MediaQuery.of(context).size.height * 4,
+            height: 200,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFF226CB7),
+                  Color(0xFF1C1452),
+                ],
+              ),
+              borderRadius: BorderRadius.only(topLeft: Radius.circular(120)),
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Icon(Icons.description, size: 65, color: Colors.white),
+                SizedBox(
+                  height: 12,
+                ),
+                Text(
+                  "NO",
+                  textAlign: TextAlign.right,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 32,
+                    fontFamily: 'Roboto',
+                  ),
+                ),
+                Text(
+                  'Newpaper Oficial',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 13,
+                    fontFamily: 'Roboto',
+                  ),
+                )
+              ],
             ),
-          ],
-        ),
+          ),
+          SizedBox(
+            height: 15,
+          ),
+          Container(
+            width: MediaQuery.of(context).size.height * 0.4,
+            height: 320,
+            child: Center(
+              child: Column(
+                // crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  TextFormField(
+                    autofocus: true,
+                    keyboardType: TextInputType.text,
+                    controller: _user,
+                    style:
+                    new TextStyle(color: Colors.deepPurple, fontSize: 22),
+                    decoration: InputDecoration(
+                      labelText: "Matricula",
+                    ),
+                  ),
+                  Divider(),
+                  TextFormField(
+                    autofocus: true,
+                    obscureText: true,
+                    keyboardType: TextInputType.number,
+                    controller: _senha,
+                    style:
+                    new TextStyle(color: Colors.deepPurple, fontSize: 22),
+                    decoration: InputDecoration(
+                      labelText: "Senha",
+                    ),
+                  ),
+                  Divider(),
+                  ButtonTheme(
+                    height: 40,
+                    child: RaisedButton(
+                      onPressed: () {
+                        RegExp validUser = new RegExp(r"[0-9]");
+                        RegExp validSenha = new RegExp(r"[0-9]");
+                        Iterable<Match> match1 =
+                        validSenha.allMatches(_user.text);
+                        Iterable<Match> match2 =
+                        validUser.allMatches(_senha.text);
+                        if (match1.length == 0 || match2.length == 0) {
+                          Alert(
+                            context: context,
+                            title: "Matricula/Senha não foi informada",
+                            buttons: [
+                              DialogButton(
+                                child: Text(
+                                  "OK",
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 20),
+                                ),
+                                onPressed: () => Navigator.pop(context),
+                              ),
+                            ],
+                          ).show();
+                        } else {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => LoginPage(),
+                              ));
+                        }
+                      },
+                      color: Color(0xFF226CB7),
+                      child: Text(
+                        "Logar",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }
